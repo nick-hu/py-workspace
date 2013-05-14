@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from decimal import Decimal
+import math
 
 
 class Function():
@@ -12,18 +13,19 @@ class Function():
 
 
 class Poly(Function):
-    def __init__(self, *coefs):
-        if type(coefs) == tuple and len(coefs) > 1:
-            coefs = list(coefs)
-        else:
-            coefs = coefs[0]
-        self.coefs = zip([float(c) for c in coefs], range(len(coefs))[::-1])
+    def __init__(self, coefs):
+        coefs = [Decimal(str(c)) for c in coefs]
+        deg = [Decimal(str(n)) for n in range(len(coefs))[::-1]]
+        self.coefs = zip(coefs, deg)
 
     def val(self, x):
-        y = 0
+        y = Decimal(0)
         for c in self.coefs:
-            y = y + c[0] * x ** c[1]
-        return y
+            if c[1] != 0:
+                y = y + c[0] * Decimal(str(x)) ** c[1]
+            else:
+                y = y + c[0] * Decimal(str(x))
+        return float(y)
 
 
 class Rational(Function):
@@ -36,7 +38,17 @@ class Rational(Function):
         return self.f.val(x) / self.g.val(x)
 
 
-def flrange(start, end, step=1.0):
+class Radical(Function):
+    def __init__(self, f):
+        self.f = f
+
+    def val(self, x):
+        if self.f.val(x) < 0:
+            return None
+        return math.sqrt(self.f.val(x))
+
+
+def flrange(start, end, step=Decimal('1.0')):
     if (start < end and step <= 0) or (start > end and step >= 0):
         return
 
@@ -51,12 +63,15 @@ def flrange(start, end, step=1.0):
             n = n + step
 
 # Examples
-a = Poly(1, 0, 0)  # Quadratic
+a = Poly([1, 0, 0])  # Quadratic
 print a.val(32.2)  # 1036.84
 print a.table([0, 1, 2])  # {0: 0.0, 1: 1.0, 2: 4.0}
 print a.trans(range(3))  # [0.0, 1.0, 4.0]
 
-b = Rational(Poly(1, 1, 3), Poly(1, 0))
+b = Rational(Poly([1, 1, 3]), Poly([1, 0]))
 print b.table(range(2))  # {0: None, 1: 5.0}
 
-print [i for i in flrange(1, 2, 0.2)]
+c = Radical(Poly([1, 0, 0]))
+print c.trans(range(-2, 3))
+
+print [i for i in flrange(1, 2, 0.15)]
