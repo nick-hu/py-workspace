@@ -18,32 +18,32 @@ while True:
 
         if xval % 1 != 0:  # If xval is not an integer, don't plot
             if yval == 0:
-                print 10*' = ', '|', 10*' = ', yval
+                print 10 * ' = ', '|', 10 * ' = ', yval
             else:
-                print 10*' - ', '|', 10*' - ', yval
+                print 10 * ' - ', '|', 10 * ' - ', yval
 
         elif nright > 9 or pleft > 9:  # If point is off graph, don't ploy
             if yval == 0:
-                print 10*' = ', '|', 10*' = ', yval
+                print 10 * ' = ', '|', 10 * ' = ', yval
             else:
-                print 10*' - ', '|', 10*' - ', yval
+                print 10 * ' - ', '|', 10 * ' - ', yval
 
         elif yval == 0:  # Special plotting if point crosses x-axis
             if nleft == 10:
-                print 10*' = ', 'o', 10*' = ', yval
+                print 10 * ' = ', 'o', 10 * ' = ', yval
             elif nleft < 10:
-                print nleft*' = ', 'o', nright*' = ', '|', 10*' = ', yval
+                print nleft * ' = ', 'o', nright * ' = ', '|', 10 * ' = ', yval
             else:
-                print 10*' = ', '|', pleft*' = ', 'o', pright*' = ', yval
+                print 10 * ' = ', '|', pleft * ' = ', 'o', pright * ' = ', yval
 
         elif nleft == 10:  # Special plotting if point crosses y-axis
-            print 10*' - ', 'o', 10*' - ', yval
+            print 10 * ' - ', 'o', 10 * ' - ', yval
 
         elif nleft < 10:  # Plotting for a negative xval
-            print nleft*' - ', 'o', nright*' - ', '|', 10*' - ', yval
+            print nleft * ' - ', 'o', nright * ' - ', '|', 10 * ' - ', yval
 
         else:  # Plotting for a positive xval
-            print 10*' - ', '|', pleft*' - ', 'o', pright*' - ', yval
+            print 10 * ' - ', '|', pleft * ' - ', 'o', pright * ' - ', yval
 
         yval = yval - 1
 
