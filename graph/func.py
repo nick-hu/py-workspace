@@ -48,6 +48,46 @@ class Radical(Function):
         return math.sqrt(self.f.val(x))
 
 
+class Exponent(Function):
+    def __init__(self, trans):
+        self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
+        self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+        self.h = Decimal(str(trans[4]))
+
+    def val(self, x):
+        x = Decimal(str(x))
+        return float(self.c * self.a ** (self.d * x - self.h) + self.k)
+
+
+class Log(Function):
+    def __init__(self, trans):
+        self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
+        self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+        self.h = Decimal(str(trans[4]))
+
+    def val(self, x):
+        x = Decimal(str(x))
+        if self.d * (x - self.h) <= 0:
+            return None
+        if self.a == Decimal('10'):
+            logval = Decimal(str(math.log10(self.d * (x - self.h))))
+            return float(self.c * logval + self.k)
+        logval = Decimal(str(math.log(self.d * (x - self.h), self.a)))
+        return float(self.c * logval + self.k)
+
+
+class Trig(Function):
+    def __init__(self, f, trans):
+        self.f = f
+        self.a, self.b = Decimal(str(trans[0])), Decimal(str(trans[1]))
+        self.c, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+
+    def val(self, x):
+        expr = self.b * Decimal(str(x)) - self.c
+        exec 'trigval = math.' + self.f + "(Decimal('" + str(expr) + "'))"
+        return self.a * Decimal(str(trigval)) + self.d
+
+
 def flrange(start, end, step=Decimal('1.0')):
     if (start < end and step <= 0) or (start > end and step >= 0):
         return
@@ -62,6 +102,7 @@ def flrange(start, end, step=Decimal('1.0')):
             yield float(n)
             n = n + step
 
+
 def prec(n):
     decimal.getcontext().prec = n
 
@@ -74,9 +115,4 @@ print a.trans(range(3))  # [0.0, 1.0, 4.0]
 
 b = Rational(Poly([1, 1, 3]), Poly([1, 0]))
 print b.table(range(2))  # {0: None, 1: 5.0}
-
-c = Radical(Poly([1, 0, 0]))
-print c.trans(range(-2, 3))
-
-print [i for i in flrange(1, 2, 0.15)]
 '''
