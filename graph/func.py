@@ -17,7 +17,6 @@ class Poly(Function):
         coefs = [Decimal(str(c)) for c in coefs]
         deg = [Decimal(str(n)) for n in range(len(coefs))[::-1]]
         self.coefs = zip(coefs, deg)
-        print self.coefs
 
     def val(self, x):
         y = Decimal(0)
