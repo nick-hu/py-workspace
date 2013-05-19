@@ -17,6 +17,7 @@ class Poly(Function):
         coefs = [Decimal(str(c)) for c in coefs]
         deg = [Decimal(str(n)) for n in range(len(coefs))[::-1]]
         self.coefs = zip(coefs, deg)
+        print self.coefs
 
     def val(self, x):
         y = Decimal(0)
@@ -24,7 +25,7 @@ class Poly(Function):
             if c[1] != 0:
                 y = y + c[0] * Decimal(str(x)) ** c[1]
             else:
-                y = y + c[0] * Decimal(str(x))
+                y = y + c[0]
         return float(y)
 
 
@@ -62,7 +63,11 @@ def flrange(start, end, step=Decimal('1.0')):
             yield float(n)
             n = n + step
 
+def prec(n):
+    decimal.getcontext().prec = n
+
 # Examples
+'''
 a = Poly([1, 0, 0])  # Quadratic
 print a.val(32.2)  # 1036.84
 print a.table([0, 1, 2])  # {0: 0.0, 1: 1.0, 2: 4.0}
@@ -75,3 +80,4 @@ c = Radical(Poly([1, 0, 0]))
 print c.trans(range(-2, 3))
 
 print [i for i in flrange(1, 2, 0.15)]
+'''
