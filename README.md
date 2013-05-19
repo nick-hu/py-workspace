@@ -1,5 +1,5 @@
-Python Projects
-===============
+Python Workspace
+================
 This is a public repository for Python programs, projects, experiments, assignments, and more. 
 
 Contents
