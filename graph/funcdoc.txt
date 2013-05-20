@@ -1,0 +1,59 @@
+Func Classes Documentation
+==========================
+
+class func.Poly(coefs)
+    Polynomial function
+
+    coefs is a list of coefficients of the form [a, b, c, ..., d, e],
+    where f(x) = ax^n + bx^(n-1) + cx^(n-2) + ... + dx^1 + e
+
+    f(x) = 2x^3 - 5x + 5 --> Poly([2, 0, -5, 5])
+
+class func.PolyTrans(deg, trans)
+    General transformation polynomial function
+
+    deg is the degree of the function
+
+    trans is a list of transformations of the form [k, a, b, h],
+    where f(x) = a(b(x-h)) ^ deg + k
+
+class func.Abs(f)
+    Absolute value function
+
+    f is a function for which a(x) = |f(x)|
+
+class func.Rational(f, g)
+    Rational function
+
+    f and g are functions for which r(x) = f(x)/g(x)
+
+class func.Radical(f)
+    Radical function
+
+    f is a function for which r(x) = sqrt(f(x))
+
+class func.Exponent(trans)
+    General transformation exponential function
+
+    trans is a list of transformations of the form [k, c, a, d, h],
+    where f(x) = ca^(d(x-h)) + k
+
+    If trans has length one, it is a list [a], where f(x) = a^x
+
+class func.Log(trans)
+    General transformation logarithmic function
+
+    trans is a list of transformations of the form [k, c, a, d, h],
+    where f(x) = cloga(d(x-h)) + k
+
+    If trans has length one, it is a list [a], where f(x) = loga(x)
+
+class func.Trig(f, trans)
+    General transformation trigonometric function
+
+    f is a trigonometric function
+    'sin', 'cos', 'tan', 'asin', acos', 'atan',
+    'sinh', 'cosh', 'tanh', 'asinh', 'acosh', or 'atanh'
+
+    trans is a list of transformations of the form [a, b, c, d],
+    where f(x) = af(b(x-c)) + d
