@@ -16,14 +16,14 @@ def initialize():
 
 
 def settings():
+    print '\nCurrent graph options:\n', opt
     while True:
-        setting = raw_input("Change option (opt['option'] = value): ")
+        setting = raw_input("\nChange option (opt['option'] = value): ")
         if setting.startswith('opt['):
             exec setting
-            print 'Graph options updated: ', opt
+            print 'Graph options updated:\n', opt
         else:
             break
-    drawaxes()
 
 
 def drawaxes():
@@ -117,9 +117,10 @@ while True:
         graphs[name] = (funcinst, tuple([int(x) for x in col.split(',')]))
         draw(name)
     elif prompt == 's':
+        settings()
         graph = Image.new('RGB', (opt['width'], opt['height']), opt['backg'])
         gpix = graph.load()
-        settings()
+        drawaxes()
         for g in graphs:
             draw(g)
     elif prompt == 'q':
