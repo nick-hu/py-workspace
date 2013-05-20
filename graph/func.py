@@ -15,7 +15,7 @@ class Function():
 class Poly(Function):
     def __init__(self, coefs):
         coefs = [Decimal(str(c)) for c in coefs]
-        deg = [Decimal(str(n)) for n in range(len(coefs))[::-1]]
+        deg = [Decimal(str(n)) for n in reversed(xrange(len(coefs)))]
         self.coefs = zip(coefs, deg)
 
     def val(self, x):
@@ -28,6 +28,25 @@ class Poly(Function):
         return float(y)
 
 
+class PolyTrans(Function):
+    def __init__(self, deg, trans):
+        self.deg = Decimal(str(deg))
+        self.k, self.a = Decimal(str(trans[0])), Decimal(str(trans[1]))
+        self.b, self.h = Decimal(str(trans[2])), Decimal(str(trans[3]))
+
+    def val(self, x):
+        x = Decimal(str(x))
+        return float(self.a * (self.b * (x - self.h)) ** self.deg + self.k)
+
+
+class Abs(Function):
+    def __init__(self, f):
+        self.f = f
+
+    def val(self, x):
+        return abs(self.f.val(x))
+
+
 class Rational(Function):
     def __init__(self, f, g):
         self.f, self.g = f, g
@@ -35,7 +54,8 @@ class Rational(Function):
     def val(self, x):
         if self.g.val(x) == 0:
             return None
-        return self.f.val(x) / self.g.val(x)
+        valf, valg = Decimal(str(self.f.val(x))), Decimal(str(self.g.val(x)))
+        return float(valf / valg)
 
 
 class Radical(Function):
@@ -50,9 +70,13 @@ class Radical(Function):
 
 class Exponent(Function):
     def __init__(self, trans):
-        self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
-        self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
-        self.h = Decimal(str(trans[4]))
+        if len(trans) == 0:
+            self.k, self.c, self.d = Decimal('0'), Decimal('1'), Decimal('1')
+            self.x, self.h = Decimal(str(trans[0])), Decimal('0')
+        else:
+            self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
+            self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+            self.h = Decimal(str(trans[4]))
 
     def val(self, x):
         x = Decimal(str(x))
@@ -61,9 +85,13 @@ class Exponent(Function):
 
 class Log(Function):
     def __init__(self, trans):
-        self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
-        self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
-        self.h = Decimal(str(trans[4]))
+        if len(trans) == 1:
+            self.k, self.c, self.d = Decimal('0'), Decimal('1'), Decimal('1')
+            self.a, self.h = Decimal(str(trans[0])), Decimal('0')
+        else:
+            self.k, self.c = Decimal(str(trans[0])), Decimal(str(trans[1]))
+            self.a, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+            self.h = Decimal(str(trans[4]))
 
     def val(self, x):
         x = Decimal(str(x))
@@ -79,13 +107,17 @@ class Log(Function):
 class Trig(Function):
     def __init__(self, f, trans):
         self.f = f
-        self.a, self.b = Decimal(str(trans[0])), Decimal(str(trans[1]))
-        self.c, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
+        if trans == []:
+            self.a, self.b = Decimal('1'), Decimal('1')
+            self.c, self.d = Decimal('0'), Decimal('0')
+        else:
+            self.a, self.b = Decimal(str(trans[0])), Decimal(str(trans[1]))
+            self.c, self.d = Decimal(str(trans[2])), Decimal(str(trans[3]))
 
     def val(self, x):
         expr = self.b * Decimal(str(x)) - self.c
         exec 'trigval = math.' + self.f + "(Decimal('" + str(expr) + "'))"
-        return self.a * Decimal(str(trigval)) + self.d
+        return float(self.a * Decimal(str(trigval)) + self.d)
 
 
 def flrange(start, end, step=Decimal('1.0')):
@@ -101,18 +133,3 @@ def flrange(start, end, step=Decimal('1.0')):
         while n > end:
             yield float(n)
             n = n + step
-
-
-def prec(n):
-    decimal.getcontext().prec = n
-
-# Examples
-'''
-a = Poly([1, 0, 0])  # Quadratic
-print a.val(32.2)  # 1036.84
-print a.table([0, 1, 2])  # {0: 0.0, 1: 1.0, 2: 4.0}
-print a.trans(range(3))  # [0.0, 1.0, 4.0]
-
-b = Rational(Poly([1, 1, 3]), Poly([1, 0]))
-print b.table(range(2))  # {0: None, 1: 5.0}
-'''
