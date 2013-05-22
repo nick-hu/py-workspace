@@ -47,15 +47,27 @@ class Abs(Function):
         return abs(self.f.val(x))
 
 
-class Rational(Function):
-    def __init__(self, f, g):
+class Combined(Function):
+    def __init__(self, f, g, op):
         self.f, self.g = f, g
+        self.op = op
 
     def val(self, x):
-        if self.g.val(x) == 0:
-            return None
         valf, valg = Decimal(str(self.f.val(x))), Decimal(str(self.g.val(x)))
-        return float(valf / valg)
+        if self.op == '+':
+            return float(valf + valg)
+        elif self.op == '-':
+            return float(valf - valg)
+        elif self.op == '*':
+            return float(valf * valg)
+        elif self.op == '/':
+            if self.g.val(x) == 0:
+                return None
+            return float(valf / valg)
+        elif self.op == '@':
+            if valg is None:
+                return None
+            return self.f.val(valg)
 
 
 class Radical(Function):
