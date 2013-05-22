@@ -22,10 +22,13 @@ class func.Abs(f)
 
     f is a function for which a(x) = |f(x)|
 
-class func.Rational(f, g)
-    Rational function
+class func.Combined(f, g, op)
+    Combined function (includes rational functions)
 
-    f and g are functions for which r(x) = f(x)/g(x)
+    op is an operation '+', '-', '*', '/', or '@'
+
+    f and g are functions for which
+    c(x) = f(x)+g(x) or f(x)-g(x) or f(x)*g(x) or f(x)/g(x) or f(g(x))
 
 class func.Radical(f)
     Radical function
