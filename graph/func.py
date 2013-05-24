@@ -31,8 +31,12 @@ class Poly(Function):
 class PolyTrans(Function):
     def __init__(self, deg, trans):
         self.deg = Decimal(str(deg))
-        self.k, self.a = Decimal(str(trans[0])), Decimal(str(trans[1]))
-        self.b, self.h = Decimal(str(trans[2])), Decimal(str(trans[3]))
+        if trans == []:
+            self.k, self.a = Decimal('0'), Decimal('1')
+            self.b, self.h = Decimal('1'), Decimal('0')
+        else:
+            self.k, self.a = Decimal(str(trans[0])), Decimal(str(trans[1]))
+            self.b, self.h = Decimal(str(trans[2])), Decimal(str(trans[3]))
 
     def val(self, x):
         x = Decimal(str(x))
@@ -82,7 +86,7 @@ class Radical(Function):
 
 class Exponent(Function):
     def __init__(self, trans):
-        if len(trans) == 0:
+        if len(trans) == 1:
             self.k, self.c, self.d = Decimal('0'), Decimal('1'), Decimal('1')
             self.x, self.h = Decimal(str(trans[0])), Decimal('0')
         else:
@@ -130,6 +134,17 @@ class Trig(Function):
         expr = self.b * Decimal(str(x)) - self.c
         exec 'trigval = math.' + self.f + "(Decimal('" + str(expr) + "'))"
         return float(self.a * Decimal(str(trigval)) + self.d)
+
+
+class Point(Function):
+    def __init__(self, d):
+        self.d = d
+
+    def val(self, x):
+        if x in self.d:
+            return float(self.d[x])
+        else:
+            return None
 
 
 def flrange(start, end, step=Decimal('1.0')):
