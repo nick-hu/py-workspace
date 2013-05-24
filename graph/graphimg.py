@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-from math import *
+from math import pi, e
+from itertools import product
 import Image
 from func import *
 
@@ -18,40 +19,41 @@ def initialize():
 def settings():
     print '\nCurrent graph options:\n', opt
     while True:
-        setting = raw_input("\nChange option (opt['option'] = value): ")
-        if setting.startswith('opt['):
-            exec setting
-            print 'Graph options updated:\n', opt
-        else:
+        setting = raw_input("\nChange option (option = value): ").split(' = ')
+        if setting == ['']:
             break
+        else:
+            exec "opt['" + setting[0] + "'] = " + setting[1]
+            print 'Graph options updated:\n', opt
 
 
 def drawaxes():
-    if opt['drawaxes']:
-        xcent, ycent, ticks = opt['width'] // 2, opt['height'] // 2, []
-        for xtick in flrange(opt['xmin'], opt['xmax'] + 1, opt['xscl']):
-            ticks.append(pixel(xtick, 0))
-        for ytick in flrange(opt['ymin'], opt['ymax'] + 1, opt['yscl']):
-            ticks.append(pixel(0, ytick))
+    width, height = opt['width'], opt['height']
+    xcent, ycent, ax = opt['width'] // 2, opt['height'] // 2, opt['axes']
+    tkx = ycent if opt['grid'] else opt['tick'] + 2
+    tky = xcent if opt['grid'] else opt['tick'] + 2
 
-        for l in xrange(ycent - opt['axes'] + 1, ycent + opt['axes']):
-            for w in xrange(opt['width']):
-                gpix[w, l] = opt['axescolor']
-                if (w, l) in ticks:
-                    for tw in xrange(w-1, w+2):
-                        if 0 <= tw < opt['width']:
-                            gpix[tw, l - opt['axes']] = opt['axescolor']
-                            gpix[tw, l - opt['axes'] - 1] = opt['axescolor']
-                            gpix[tw, l - opt['axes'] - 2] = opt['axescolor']
-        for l in xrange(xcent - opt['axes'] + 1, xcent + opt['axes']):
-            for h in xrange(opt['height']):
-                gpix[l, h] = opt['axescolor']
-                if (l, h) in ticks:
-                    for th in xrange(h-1, h+2):
-                        if 0 <= th < opt['height']:
-                            gpix[l + opt['axes'], th] = opt['axescolor']
-                            gpix[l + opt['axes'] + 1, th] = opt['axescolor']
-                            gpix[l + opt['axes'] + 2, th] = opt['axescolor']
+    if opt['drawaxes']:
+        for pnt in product(xrange(width), xrange(ycent-ax+1, ycent+ax)):
+            gpix[pnt[0], pnt[1]] = opt['axescolor']
+        for pnt in product(xrange(xcent-ax+1, xcent+ax), xrange(height)):
+            gpix[pnt[0], pnt[1]] = opt['axescolor']
+
+        if opt['grid']:
+            ax = ax - 1  # Thin out gridlines by 1
+        for tk in flrange(opt['xmin'], opt['xmax']+1, opt['xscl']):
+            pntx, pnty = pixel(tk, 0)
+            tkw1, tkw2, tkh1, tkh2 = pntx-ax+1, pntx+ax, pnty-tkx+1, pnty+tkx
+            for tkpnt in product(xrange(tkw1, tkw2), xrange(tkh1, tkh2)):
+                if 0 <= tkpnt[0] < width and 0 <= tkpnt[1] < height:
+                    gpix[tkpnt[0], tkpnt[1]] = opt['axescolor']
+
+        for tk in flrange(opt['ymin'], opt['ymax']+1, opt['yscl']):
+            pntx, pnty = pixel(0, tk)
+            tkw1, tkw2, tkh1, tkh2 = pntx-tky+1, pntx+tky, pnty-ax+1, pnty+ax
+            for tkpnt in product(xrange(tkw1, tkw2), xrange(tkh1, tkh2)):
+                if 0 <= tkpnt[0] < width and 0 <= tkpnt[1] < height:
+                    gpix[tkpnt[0], tkpnt[1]] = opt['axescolor']
 
 
 def draw(name):
@@ -96,7 +98,7 @@ def pixel(x, y):
 opt = {'xmin': -20, 'xmax': 20, 'ymin': -20, 'ymax': 20,
        'width': 1000, 'height': 1000, 'xscl': 1, 'yscl': 1,
        'axes': 2, 'drawaxes': True, 'axescolor': (0, 0, 0),
-       'point': 2, 'backg': (255, 255, 255)}
+       'tick': 2, 'grid': False, 'point': 2, 'backg': (255, 255, 255)}
 
 initialize()
 graph.save(filename)
