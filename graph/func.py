@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from decimal import Decimal
+from decimal import Decimal, getcontext
 import math
 
 
@@ -160,3 +160,7 @@ def flrange(start, end, step=Decimal('1.0')):
         while n > end:
             yield float(n)
             n = n + step
+
+
+def prec(p):
+    getcontext().prec = p + 1
