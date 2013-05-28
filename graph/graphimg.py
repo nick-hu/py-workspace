@@ -64,6 +64,8 @@ def draw(name):
     # Iterate through all possible x values
     for val in flrange(opt['xmin'], opt['xmax'] + pix, pix):
         exec 'yval = graphs[' + repr(name) + '][0].val(' + str(val) + ')'
+        if opt['round'] and yval is not None:
+            yval = deciround(yval, opt['round'])
 
         coords, point = pixel(val, yval), []
         # Thicken point by surrounding with a square
@@ -99,22 +101,19 @@ def pixel(x, y):
 opt = {'xmin': -20, 'xmax': 20, 'ymin': -20, 'ymax': 20,
        'width': 1000, 'height': 1000, 'xscl': 1, 'yscl': 1,
        'axes': 2, 'drawaxes': True, 'axescolor': (0, 0, 0),
-       'tick': 2, 'grid': False, 'point': 2, 'backg': (255, 255, 255)}
+       'tick': 2, 'grid': False, 'point': 2, 'backg': (255, 255, 255),
+       'round': 0}
 
-init = False
+initialize()
+graph.save(filename)
 while True:
     prompt = raw_input('\nNew image(i)/New function(f)/Analyze function(a)/' +
                        'Settings(s)/Quit(q): ')
 
     if prompt == 'i':
         initialize()
-        init = True
 
     elif prompt == 'f':
-        if not init:
-            initialize()
-            graph.save(filename)
-            init = True
         while True:
             name = raw_input('\nFunction name: ')
             if name not in graphs:
@@ -127,6 +126,8 @@ while True:
         draw(name)
 
     elif prompt == 'a':
+        for grph in graphs:
+            exec "graphs['" + grph + "'] = " + str(graphs[grph])
         while True:
             afunc = raw_input('\nAnalysis: ')
             if afunc == '':
@@ -134,10 +135,6 @@ while True:
             exec 'print ' + afunc
 
     elif prompt == 's':
-        if not init:
-            initialize()
-            graph.save(filename)
-            init = True
         settings()
         graph = Image.new('RGB', (opt['width'], opt['height']), opt['backg'])
         gpix = graph.load()

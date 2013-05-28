@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from decimal import Decimal, getcontext
+from decimal import Decimal, ROUND_HALF_UP, getcontext
 import math
 
 
@@ -162,5 +162,14 @@ def flrange(start, end, step=Decimal('1.0')):
             n = n + step
 
 
-def prec(p):
+def deciround(n, p=2):
+    n = Decimal(str(n))
+    if p >= 1:
+        p = Decimal('0.' + '0' * (p-1) + '1')
+    else:
+        p = Decimal('1' + '0' * (-1*(p+1)))
+    return float(n.quantize(p, rounding=ROUND_HALF_UP))
+
+
+def precision(p):
     getcontext().prec = p + 1

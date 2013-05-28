@@ -6,8 +6,7 @@ from func import *
 
 
 def value(f, x, p=2):
-    prec(p)
-    return f.val(x)
+    return deciround(f.val(x), p)
 
 
 def root(f, a, b, p=2):
@@ -19,39 +18,37 @@ def root(f, a, b, p=2):
     while i <= maxiter:
         c = (Decimal(str(a)) + Decimal(str(b))) / Decimal('2.0')
         if f.val(c) == 0:
-            return c.quantize(Decimal(prec), rounding=ROUND_HALF_UP)
+            return deciround(c, p)
         if cmp(f.val(a), 0) != cmp(f.val(c), 0):
             b = c
         else:
             a = c
         i = i + 1
 
-    return c.quantize(Decimal(prec), rounding=ROUND_HALF_UP)
+    return deciround(c, prec)
 
 
 def intersect(f, g, a, b, p=2):
     h = Combined(f, g, '-')
     x = root(h, a, b, p)
-    return float(x), f.val(x)
+    return deciround(x, p), deciround(f.val(x), p)
 
 
 def fmin(f, a, b, p=2):
+    a, b = Decimal(str(a)), Decimal(str(b))
     pr = Decimal('0.' + '0' * (p-1) + '1')
     n, nx = Decimal('0'), Decimal('0')
     for x in flrange(a, b, pr):
         if f.val(x) < n:
             n, nx = Decimal(str(f.val(x))), Decimal(str(x))
-    nx = nx.quantize(pr, rounding=ROUND_HALF_UP)
-    n = n.quantize(pr, rounding=ROUND_HALF_UP)
-    return float(nx), float(n)
+    return deciround(nx, p), deciround(n, p)
 
 
 def fmax(f, a, b, p=2):
+    a, b = Decimal(str(a)), Decimal(str(b))
     pr = Decimal('0.' + '0' * (p-1) + '1')
     n, nx = Decimal('0'), Decimal('0')
     for x in flrange(a, b, pr):
         if f.val(x) > n:
             n, nx = Decimal(str(f.val(x))), Decimal(str(x))
-    nx = nx.quantize(pr, rounding=ROUND_HALF_UP)
-    n = n.quantize(pr, rounding=ROUND_HALF_UP)
-    return float(nx), float(n)
+    return deciround(nx, p), deciround(n, p)
