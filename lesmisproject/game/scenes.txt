@@ -1,0 +1,105 @@
+1
+It is a severe winter in the year 1795. You have no work, hardly any money, and no food. What do you do?
+Do nothing: -15 0 50 2 0 0 2
+Rob the bank: -30 125 225 3 17 0 3
+Steal bread: -5 0 175 1 0 0 4
+Steal meat: -35 0 175 3 0 0 5
+
+2
+You decide to do nothing, despite your dire predicament. Your health slowly declines...
+Steal bread: -5 0 175 1 0 0 4
+Steal meat: -35 0 175 3 0 0 5
+Gamble: 0 -5 200 0 10 0 6
+Do nothing (again): -15 0 50 2 0 0 2
+
+3
+Desperately, you rob the nearest bank and grab the first things you see. Law enforcement authorities soon arrive and you are forced to engage in hand-to-hand combat. You escape, but with severe injuries.
+Gamble: 0 -10 200 0 38 0 6
+Run away: -10 0 150 5 0 0 8
+Buy bread: 15 -1 50 10 0 0 9
+ : 0 0 0 0 0 0 3
+
+4
+Quickly, you break into the baker's shop and steal bread while devouring a mouthful. The baker soon realizes the theft and comes chasing after you.
+Fight the baker: -25 0 175 5 0 0 8
+Sprint away: -10 0 150 5 0 0 8
+Throw the bread at the baker: -2 0 100 5 0 0 8
+Surrender: 0 0 50 0 0 0 7
+
+5
+Quickly, you break into the butcher's shop and steal meat. The butcher, however, shows no mercy and throws the nearest thing he finds as you attempt to get away - a butcher's knife. Ouch!
+Fight the butcher: -45 0 175 5 0 0 8
+Throw the meat at the butcher: -2 0 100 5 0 0 8
+Surrender: 0 0 50 0 0 0 7
+Sprint away: -35 0 175 5 0 0 8
+
+6
+In a risky move, you gamble as much money as you can.
+Buy bread: 15 -1 50 10 0 0 9
+Leave town: 0 0 50 0 0 0 11
+ : 0 0 0 0 0 0 6
+ : 0 0 0 0 0 0 6
+
+7
+Despite your pleas and explanations, you are immediately arrested. You are sentenced to a five years in the galleys at Toulon. Finally, after four long years, you have a chance to escape!
+Attempt escape: -15 0 0 2 0 0 12
+Remain in the galleys: -5 0 0 1 0 0 13
+ : 0 0 0 0 0 0 7
+ : 0 0 0 0 0 0 7
+
+8
+With difficulty, you manage to escape and run out of town.
+Walk to Toulon : 0 0 50 0 0 0 10
+Walk to Paris : 0 0 50 0 0 0 1w
+ : 0 0 0 0 0 0 8
+ : 0 0 0 0 0 0 8
+
+9
+You purchase and eat a delicious loaf of bread. However, as you exit the shop, the baker recognizes you as the bank thief and comes chasing after you!
+Fight the baker: -25 0 175 5 0 0 8
+Sprint away: -10 0 150 5 0 0 8
+Throw the bread at the baker: -2 0 100 5 0 0 8
+Explain your innocence: 0 0 50 0 0 0 7
+
+10
+Upon your arrival at Toulon, you are arrested by authorities for your crimes.
+Fight: -25 0 175 5 0 0 8
+Sprint away: -10 0 150 5 0 0 8
+Plead innocent: 0 0 50 0 0 0 7
+Surrender: 0 0 50 0 0 0 7
+
+11
+You decide to leave town.
+Walk to Toulon : 0 0 50 0 0 0 10
+Walk to Paris : 0 0 50 0 0 0 1w
+Walk to Digne : 0 0 50 0 0 0 15
+ : 0 0 0 0 0 0 11
+
+12
+You make your escape succesfully but you are eventually caught while wandering in the fields, famished and tired. After two more years, you have another chance.
+Attempt escape: -15 0 0 2 0 0 14
+Remain in the galleys: -5 0 0 1 0 0 13
+ : 0 0 0 0 0 0 12
+ : 0 0 0 0 0 0 12
+
+13
+Finally, your sentence is complete and you are set at large. 
+Walk back home : 0 0 50 0 0 0 2w
+Walk to Paris : 0 0 50 0 0 0 1w
+Walk to Digne : 0 0 50 0 0 0 15
+ : 0 0 0 0 0 0 13
+
+14
+After many subsequent escape attempts, you are finally set at large in 1815, 19 years after your incarceration.
+Walk back home : 0 0 50 0 0 0 2w
+Walk to Paris : 0 0 50 0 0 0 1w
+Walk to Digne : 0 0 50 0 0 0 15
+ : 0 0 0 0 0 0 14
+
+15
+You arrive at Digne an hour before sunset.
+Stay at the Croix de Colbas inn: 0 0 0 0 0 0 tbcw
+Sleep on the streets: 0 0 0 0 0 0 tbcw
+Beg for lodging in people's homes: 0 0 0 0 0 0 tbcw
+Sneak into the inn rooms from outside: 0 0 0 0 0 0 tbcw
+

@@ -1,0 +1,8 @@
+=========================
+VERSION HISTORY/CHANGELOG
+=========================
+
+April 18, 2013: v. 1.0
+	- Initial release
+	- 15 scenes
+	- "Prelude" section: bread & galleys
