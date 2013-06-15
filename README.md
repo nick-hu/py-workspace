@@ -12,8 +12,6 @@ lesmisproject: Les Misérables text-based adventure game for English class :)
 
 scrabble: Scrabble-playing utilities and helpers
 
-sockreview: tcp/udp socket programs for test review
-
 tictactoe: tic-tac-toe player
 
 -
