@@ -1,0 +1,18 @@
+LINEAR ANALYSIS OPTIONS
+
+Modify settings in the form "setting : value"
+to ensure correct results, then redraw the graph.
+
+Minimum x value : -15
+Maximum x value : 15
+Minimum y value : -10
+Maximum y value : 10
+x scale : 1
+y scale : 1
+Point size : 2
+Tick thickness : 2
+Draw axes (True or False) : True
+Axes thickness : 2
+Axes color (red, green, blue) : (185, 225, 235)
+Draw grid (True or False) : True
+Background color (red, green, blue) : (255, 255, 255)
