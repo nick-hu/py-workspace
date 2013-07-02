@@ -10,6 +10,10 @@ graph: function image grapher
 
 lesmisproject: Les Misérables text-based adventure game for English class :)
 
+linear: pyFLTK linear equation analyzer with graphs and equations
+
+quizzer: Quizzing program with cool features :D
+
 scrabble: Scrabble-playing utilities and helpers
 
 tictactoe: tic-tac-toe player

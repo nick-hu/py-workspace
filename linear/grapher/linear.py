@@ -5,82 +5,127 @@ import lineanalyze as line
 import graphcmd
 
 
-def setopt(widget, align, value, font=None):
-    widget.align(align)
-    widget.value(value)
-    if font is not None:
-        widget.labelfont(font)
-
-
 def update_eqn(widget):
     global eqn
 
     try:
-        if widget == interbutton:
-            slope, inter = float(intslope.value()), float(intinter.value())
-            eqn = line.Linear('', [slope, inter])
-        elif widget == pointbutton:
-            y1, x1 = float(pointy1.value()), float(pointx1.value())
-            eqn = line.Linear('p', [y1, float(pointslope.value()), x1])
+        if widget in [finterbutton, fpointbutton, fgenbutton]:
+            if widget == finterbutton:
+                slope, inter = fintslope.value(), fintinter.value()
+                eqn = line.Linear('', [slope, inter])
+            elif widget == fpointbutton:
+                y1, x1 = fpointy1.value(), fpointx1.value()
+                eqn = line.Linear('p', [y1, fpointslope.value(), x1])
+            else:
+                a, b, c = fgena.value(), fgenb.value(), fgenc.value()
+                eqn = line.Linear('g', [a, b, c])
         else:
-            a, b = float(gena.value()), float(genb.value())
-            eqn = line.Linear('g', [a, b, float(genc.value())])
+            if widget == ginterbutton:
+                slope, inter = gintslope.value(), gintinter.value()
+                eqn = line.Linear('', [slope, inter])
+            elif widget == gpointbutton:
+                y1, x1 = gpointy1.value(), gpointx1.value()
+                eqn = line.Linear('p', [y1, gpointslope.value(), x1])
+            else:
+                a, b, c = ggena.value(), ggenb.value(), ggenc.value()
+                eqn = line.Linear('g', [a, b, c])
     except:
         graph.label('Error: Check that coefficients are properly entered.')
         graph.image(None)
         graph.redraw()
         return
 
-    if widget != interbutton:
-        intslope.value(str(eqn.slope()))
-        intinter.value(str(eqn.yint()))
-    if widget != pointbutton:
-        coefs = [str(n) for n in eqn.pointform()]
-        pointy1.value(coefs[0])
-        pointslope.value(coefs[1])
-        pointx1.value(coefs[2])
-    if widget != genbutton:
-        coefs = [str(n) for n in eqn.generalform()]
-        gena.value(coefs[0])
-        genb.value(coefs[1])
-        genc.value(coefs[2])
-
-    if not sim:
-        graphcmd.main('c')
-    update_setting()
-    if 'a' in graphcmd.graphs:
-        graphcmd.main('f', 'b', eqn, (0, 0, 200))
+    if widget in [finterbutton, fpointbutton, fgenbutton]:
+        fxinttext.value(eqn.xint())
+        fyinttext.value(eqn.yint())
+        fslopetext.value(eqn.slope())
+        if widget != finterbutton:
+            fintslope.value(str(eqn.slope()))
+            fintinter.value(str(eqn.yint()))
+        if widget != fpointbutton:
+            coefs = [str(n) for n in eqn.pointform()]
+            fpointy1.value(coefs[0])
+            fpointslope.value(coefs[1])
+            fpointx1.value(coefs[2])
+        if widget != fgenbutton:
+            coefs = [str(n) for n in eqn.generalform()]
+            fgena.value(coefs[0])
+            fgenb.value(coefs[1])
+            fgenc.value(coefs[2])
     else:
-        graphcmd.main('f', 'a', eqn, (200, 0, 0))
+        gxinttext.value(eqn.xint())
+        gyinttext.value(eqn.yint())
+        gslopetext.value(eqn.slope())
+        if widget != ginterbutton:
+            gintslope.value(str(eqn.slope()))
+            gintinter.value(str(eqn.yint()))
+        if widget != gpointbutton:
+            coefs = [str(n) for n in eqn.pointform()]
+            gpointy1.value(coefs[0])
+            gpointslope.value(coefs[1])
+            gpointx1.value(coefs[2])
+        if widget != ggenbutton:
+            coefs = [str(n) for n in eqn.generalform()]
+            ggena.value(coefs[0])
+            ggenb.value(coefs[1])
+            ggenc.value(coefs[2])
+
+    update_setting()
+    if widget in [finterbutton, fpointbutton, fgenbutton]:
+        graphcmd.graphs['f'] = (eqn, flinecolor)
+    else:
+        graphcmd.graphs['g'] = (eqn, glinecolor)
+    graphcmd.main('s', graphcmd.opt)
     graph.label(None)
     graph.image(Fl_PNG_Image('graph.png'))
 
-    xinttext.value(eqn.xint())
-    yinttext.value(eqn.yint())
-    slopetext.value(eqn.slope())
+    if len(graphcmd.graphs) == 2:
+        eqna, eqnb = graphcmd.graphs['f'][0], graphcmd.graphs['g'][0]
+        solution.value(str(line.LinearSystem(eqna, eqnb).xint()))
 
     window.redraw()
 
 
 def update_value(widget):
+    if 'f' in graphcmd.graphs:
+        fvalueoutput.value(graphcmd.graphs['f'][0].val(widget.value()))
+        fvalueoutput.redraw()
+    if 'g' in graphcmd.graphs:
+        gvalueoutput.value(graphcmd.graphs['g'][0].val(widget.value()))
+        gvalueoutput.redraw()
+
+
+def clear_func(widget):
+    global eqns
+
     try:
-        valueoutput.value(eqn.val(widget.value()))
-        valueoutput.redraw()
-    except NameError:
+        if widget == clearf:
+            del graphcmd.graphs['f']
+            graphcmd.main('s', graphcmd.opt)
+            for widget in [fxinttext, fyinttext, fslopetext, fvalueoutput]:
+                widget.value(0)
+        else:
+            del graphcmd.graphs['g']
+            graphcmd.main('s', graphcmd.opt)
+            for widget in [gxinttext, gyinttext, gslopetext, gvalueoutput]:
+                widget.value(0)
+    except KeyError:
         pass
+    graph.image(Fl_PNG_Image('graph.png'))
+    window.redraw()
 
 
 def settings_window(widget):
     global setbox, setwindow
 
-    setwindow = Fl_Window(200, 100, 375, 380, 'Linear Analysis: Settings')
+    setwindow = Fl_Window(200, 100, 400, 380, 'Linear Analysis: Settings')
     setwindow.color(fl_rgb_color(247, 247, 247))
     setwindow.begin()
 
-    setbox = Fl_Multiline_Input(13, 10, 350, 340)
+    setbox = Fl_Multiline_Input(13, 10, 375, 340)
     with open('config.txt') as config:
         setbox.value(config.read())
-    applybutton = Fl_Button(262, 354, 100, 20, 'Apply settings')
+    applybutton = Fl_Button(287, 354, 100, 20, 'Apply settings')
     applybutton.color(fl_rgb_color(230, 230, 230))
     applybutton.callback(apply_setting)
 
@@ -95,90 +140,169 @@ def apply_setting(widget):
 
 
 def update_setting():
-    optdict = {5: 'xmin', 6: 'xmax', 7: 'ymin', 8: 'ymax',
-               9: 'xscl', 10: 'yscl', 11: 'point', 12: 'tick',
-               13: 'drawaxes', 14: 'axes', 15: 'axescolor',
-               16: 'grid', 17: 'backg'}
+    global flinecolor, glinecolor
+
+    optdict = {7: 'xmin', 8: 'xmax', 9: 'ymin', 10: 'ymax',
+               11: 'xscl', 12: 'yscl', 13: 'point', 14: 'tick',
+               15: 'drawaxes', 16: 'axes', 17: 'axescolor',
+               18: 'grid', 19: 'backg'}
     newopt = {}
     with open('config.txt') as config:
         lcount = 0
         for configline in config:
-            if lcount >= 5:
-                exec 'change = ' + configline.split(' : ')[1]
+            if lcount == 5:
+                colortup = configline.split(' : ')[1]
+                exec('flinecolor = ' + colortup, globals())
+            elif lcount == 6:
+                colortup = configline.split(' : ')[1]
+                exec('glinecolor = ' + colortup, globals())
+            elif lcount >= 7:
+                exec('change = ' + configline.split(' : ')[1])
                 newopt[optdict[lcount]] = change
             lcount = lcount + 1
     graphcmd.main('s', newopt)
 
-sim = False
+
+def setopt(widget, align, value, font=None):
+    widget.align(align)
+    widget.value(value)
+    if font is not None:
+        widget.labelfont(font)
+
+
 graphcmd.main('i', 'graph.png')
 update_setting()
 
 
-window = Fl_Window(200, 100, 800, 700, 'Linear Equation Analysis')
+window = Fl_Window(50, 50, 1250, 671, 'Linear Equation Analysis')
 window.color(fl_rgb_color(247, 247, 247))
 window.begin()
 
-setbutton = Fl_Button(720, 7, 70, 25, 'Settings')
+setbutton = Fl_Button(1160, 635, 80, 25, 'Settings')
 setbutton.color(fl_rgb_color(230, 230, 230))
 setbutton.callback(settings_window)
 
-inttext = Fl_Box(85, 10, 50, 20, 'Slope-intercept form:\t\ty = ')
-intslope = Fl_Input(220, 10, 50, 20, 'x')
-setopt(intslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
+fxtext = Fl_Box(589, 20, 0, 0, 'f(x)')
+fxtext.labelfont(FL_BOLD)
 
-intinter = Fl_Input(300, 10, 50, 20, '+ ')
-setopt(intinter, FL_ALIGN_LEFT, 'b')
+finttext = Fl_Box(637, 40, 50, 20, 'Slope-intercept form:\ty = ')
+fintslope = Fl_Input(759, 40, 50, 20, 'x')
+setopt(fintslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
 
-pointtext = Fl_Box(80, 40, 50, 20, 'Slope-point form:\t\ty - ')
-pointy1 = Fl_Input(205, 40, 50, 20, ' = ')
-setopt(pointy1, FL_ALIGN_RIGHT, 'y1')
+fintinter = Fl_Input(839, 40, 50, 20, '+ ')
+setopt(fintinter, FL_ALIGN_LEFT, 'b')
 
-bracketl = Fl_Box(310, 45, 50, 10, '(')
-pointslope = Fl_Input(280, 40, 50, 20, ' x')
-setopt(pointslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
+fpointtext = Fl_Box(632, 69, 50, 20, 'Slope-point form:\ty - ')
+fpointy1 = Fl_Input(759, 69, 50, 20, ' = ')
+setopt(fpointy1, FL_ALIGN_RIGHT, 'y1')
 
-pointx1 = Fl_Input(360, 40, 50, 20, ' - ')
-setopt(pointx1, FL_ALIGN_LEFT, 'x1')
-bracketr = Fl_Box(390, 45, 50, 10, ')')
+fbracketl = Fl_Box(869, 73, 50, 10, '(')
+fpointslope = Fl_Input(839, 69, 50, 20, ' x')
+setopt(fpointslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
 
-gentext = Fl_Box(29, 70, 50, 20, 'General form:')
+fpointx1 = Fl_Input(919, 69, 50, 20, ' - ')
+setopt(fpointx1, FL_ALIGN_LEFT, 'x1')
+fbracketr = Fl_Box(949, 73, 50, 10, ')')
 
-gena = Fl_Input(150, 70, 50, 20, ' x')
-setopt(gena, FL_ALIGN_RIGHT, 'A', FL_BOLD + FL_ITALIC)
-genb = Fl_Input(235, 70, 50, 20, ' + ')
-setopt(genb, FL_ALIGN_LEFT, 'B')
-genc = Fl_Input(320, 70, 50, 20, ' y  + ')
-setopt(genc, FL_ALIGN_LEFT, 'C')
+fgentext = Fl_Box(597, 98, 50, 20, 'General form:')
+fgena = Fl_Input(759, 98, 50, 20, 'x')
+setopt(fgena, FL_ALIGN_RIGHT, 'A', FL_BOLD + FL_ITALIC)
+fgenb = Fl_Input(839, 98, 50, 20, '+ ')
+setopt(fgenb, FL_ALIGN_LEFT, 'B')
+fgenc = Fl_Input(919, 98, 50, 20, 'y + ')
+setopt(fgenc, FL_ALIGN_LEFT, 'C')
+fgentextend = Fl_Box(960, 98, 50, 20, ' =  0')
 
-gentextend = Fl_Box(360, 70, 50, 20, ' =  0')
+gxtext = Fl_Box(590, 140, 0, 0, 'g(x)')
+gxtext.labelfont(FL_BOLD)
 
-interbutton = Fl_Button(450, 7, 200, 25, 'Analyze slope-intercept form')
-interbutton.color(fl_rgb_color(230, 230, 230))
-pointbutton = Fl_Button(450, 37, 200, 25, 'Analyze slope-point form')
-pointbutton.color(fl_rgb_color(230, 230, 230))
-genbutton = Fl_Button(450, 67, 200, 25, 'Analyze general form')
-genbutton.color(fl_rgb_color(230, 230, 230))
-interbutton.callback(update_eqn)
-pointbutton.callback(update_eqn)
-genbutton.callback(update_eqn)
+ginttext = Fl_Box(637, 160, 50, 20, 'Slope-intercept form:\ty = ')
+gintslope = Fl_Input(759, 160, 50, 20, 'x')
+setopt(gintslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
 
-graph = Fl_Box(25, 125, 550, 550)
+gintinter = Fl_Input(839, 160, 50, 20, '+ ')
+setopt(gintinter, FL_ALIGN_LEFT, 'b')
+
+gpointtext = Fl_Box(632, 189, 50, 20, 'Slope-point form:\ty - ')
+gpointy1 = Fl_Input(759, 189, 50, 20, ' = ')
+setopt(gpointy1, FL_ALIGN_RIGHT, 'y1')
+
+gbracketl = Fl_Box(869, 193, 50, 10, '(')
+gpointslope = Fl_Input(839, 189, 50, 20, ' x')
+setopt(gpointslope, FL_ALIGN_RIGHT, 'm', FL_BOLD + FL_ITALIC)
+
+gpointx1 = Fl_Input(919, 189, 50, 20, ' - ')
+setopt(gpointx1, FL_ALIGN_LEFT, 'x1')
+gbracketr = Fl_Box(949, 193, 50, 10, ')')
+
+ggentext = Fl_Box(597, 218, 50, 20, 'General form:')
+ggena = Fl_Input(759, 218, 50, 20, 'x')
+setopt(ggena, FL_ALIGN_RIGHT, 'A', FL_BOLD + FL_ITALIC)
+ggenb = Fl_Input(839, 218, 50, 20, '+ ')
+setopt(ggenb, FL_ALIGN_LEFT, 'B')
+ggenc = Fl_Input(919, 218, 50, 20, 'y + ')
+setopt(ggenc, FL_ALIGN_LEFT, 'C')
+ggentextend = Fl_Box(960, 218, 50, 20, ' =  0')
+
+finterbutton = Fl_Button(1015, 35, 225, 25, 'Analyze slope-intercept form')
+finterbutton.color(fl_rgb_color(230, 230, 230))
+fpointbutton = Fl_Button(1015, 65, 225, 25, 'Analyze slope-point form')
+fpointbutton.color(fl_rgb_color(230, 230, 230))
+fgenbutton = Fl_Button(1015, 95, 225, 25, 'Analyze general form')
+fgenbutton.color(fl_rgb_color(230, 230, 230))
+finterbutton.callback(update_eqn)
+fpointbutton.callback(update_eqn)
+fgenbutton.callback(update_eqn)
+
+ginterbutton = Fl_Button(1015, 155, 225, 25, 'Analyze slope-intercept form')
+ginterbutton.color(fl_rgb_color(230, 230, 230))
+gpointbutton = Fl_Button(1015, 185, 225, 25, 'Analyze slope-point form')
+gpointbutton.color(fl_rgb_color(230, 230, 230))
+ggenbutton = Fl_Button(1015, 215, 225, 25, 'Analyze general form')
+ggenbutton.color(fl_rgb_color(230, 230, 230))
+ginterbutton.callback(update_eqn)
+gpointbutton.callback(update_eqn)
+ggenbutton.callback(update_eqn)
+
+graph = Fl_Box(9, 9, 550, 550)
 graph.box(FL_BORDER_BOX)
 graph.color(FL_WHITE)
 graph.image(Fl_PNG_Image('graph.png'))
 
-xinttext = Fl_Value_Output(675, 130, 90, 20, 'x-intercept\t')
-xinttext.color(FL_WHITE)
-yinttext = Fl_Value_Output(675, 160, 90, 20, 'y-intercept\t')
-yinttext.color(FL_WHITE)
-slopetext = Fl_Value_Output(675, 190, 90, 20, 'Slope\t\t')
-slopetext.color(FL_WHITE)
-valueinput = Fl_Value_Input(625, 250, 100, 20, 'x = ')
+
+fxinttext = Fl_Value_Output(159, 570, 90, 20, 'f(x) x-intercept\t')
+fxinttext.color(FL_WHITE)
+fyinttext = Fl_Value_Output(159, 600, 90, 20, 'f(x) y-intercept\t')
+fyinttext.color(FL_WHITE)
+fslopetext = Fl_Value_Output(159, 630, 90, 20, 'f(x) Slope\t\t')
+fslopetext.color(FL_WHITE)
+valueinput = Fl_Value_Input(625, 300, 100, 20, 'x = ')
 valueinput.value(0)
 valueinput.callback(update_value)
-valueoutput = Fl_Value_Output(625, 280, 100, 20, 'f(x) = ')
-valueoutput.color(FL_WHITE)
+fvalueoutput = Fl_Value_Output(625, 330, 100, 20, 'f(x) = ')
+fvalueoutput.color(FL_WHITE)
+
+gxinttext = Fl_Value_Output(450, 570, 90, 20, 'g(x) x-intercept\t')
+gxinttext.color(FL_WHITE)
+gyinttext = Fl_Value_Output(450, 600, 90, 20, 'g(x) y-intercept\t')
+gyinttext.color(FL_WHITE)
+gslopetext = Fl_Value_Output(450, 630, 90, 20, 'g(x) Slope\t\t')
+gslopetext.color(FL_WHITE)
+gvalueoutput = Fl_Value_Output(625, 360, 100, 20, 'g(x) = ')
+gvalueoutput.color(FL_WHITE)
+
+solution = Fl_Output(775, 330, 150, 20, 'Solution of f(x) = g(x)')
+solution.cursor_color(FL_WHITE)
+setopt(solution, FL_ALIGN_TOP, '')
+clearf = Fl_Button(975, 312, 100, 25, 'Clear f(x)')
+clearf.color(fl_rgb_color(230, 230, 230))
+clearf.callback(clear_func)
+clearg = Fl_Button(975, 342, 100, 25, 'Clear g(x)')
+clearg.color(fl_rgb_color(230, 230, 230))
+clearg.callback(clear_func)
+
 
 window.end()
 window.show()
+Fl.scheme('gtk+')
 Fl.run()

@@ -3,8 +3,10 @@ LINEAR ANALYSIS OPTIONS
 Modify settings in the form "setting : value"
 to ensure correct results, then redraw the graph.
 
-Minimum x value : -15
-Maximum x value : 15
+f(x) line color (red, green, blue) : (200, 200, 0)
+g(x) line color (red, green, blue) : (0, 200, 200)
+Minimum x value : -10
+Maximum x value : 10
 Minimum y value : -10
 Maximum y value : 10
 x scale : 1
