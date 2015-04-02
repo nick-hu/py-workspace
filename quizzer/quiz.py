@@ -1,8 +1,11 @@
 #!/usr/bin/python
 
 import socket
+from sys import path
 from fltk import *
 
+path.append('data')
+import quizconfig as config
 
 def start_quiz(widget):
     global qnum, qlist, score, healleft, hintleft, cheatleft, conn, teacher
@@ -22,6 +25,9 @@ def start_quiz(widget):
                 dat.append(line)
             c = c + 1
 
+    with open('out.txt', 'w') as out:
+        out.write(str(qlist))
+
     if teachip.value() != '' and 'conn' not in globals():
         connip = teachip.value().split(':')
         connip[1] = int(connip[1])
@@ -32,15 +38,17 @@ def start_quiz(widget):
     if teacher:
         conn.send('Student started quiz')
 
-    health.value(100)
+    health.value(config.HPMAX)
+    health.maximum(config.HPMAX)
     xp.value(0)
+    xp.maximum(config.XPMAX)
     prog.value(0)
     result.clear()
     health.label('HP: ' + str(int(health.value())))
     xp.label('XP: ' + str(int(xp.value())))
     prog.label(str(int(prog.value())) + '% complete')
 
-    healleft, hintleft, cheatleft = 3, 2, 1  # Change to adjust effects
+    healleft, hintleft, cheatleft = config.HEAL, config.HINT, config.CHEAT
     heal.label('Heal:\t' + str(healleft))
     hint.label('Hint:\t' + str(hintleft))
     cheat.label('Cheat:\t' + str(cheatleft))
@@ -53,13 +61,13 @@ def update_question():
         frac = str(score.count(True)) + '/' + str(len(score))
         percent = int(round((score.count(True) / float(len(score))) * 100))
         corrtext = 'Correct: ' + frac + ' = ' + str(percent) + '%'
-        scoretext = str(int(round(xp.value() * 10 - (100 - health.value()))))
+        scoretext = round(xp.value() * 10 - (config.HPMAX - health.value()))
         result.textcolor(FL_BLACK)
         result.add('')
         result.add('~ End of Quiz ~')
         result.add('Results:')
         result.add(corrtext)
-        result.add('Score: ' + scoretext)
+        result.add('Score: ' + str(int(scoretext)))
         result.redraw()
         if teacher:
             conn.send('Student finished:' + corrtext + '\n' + scoretext)
@@ -85,7 +93,7 @@ def submit_answer(widget):
     xp.value(xp.value() + qlist[qnum-1][3][1])
     result.clear()
     if correct:
-        regen = 0.25  # Change this to alter regeneration (if correct)
+        regen = config.REGEN
         health.value(health.value() + int(regen * (qlist[qnum-1][3][0])))
         result.textcolor(fl_rgb_color(50, 130, 50))
         result.add('Correct!')
@@ -94,14 +102,15 @@ def submit_answer(widget):
         result.textcolor(fl_rgb_color(220, 75, 60))
         result.add('Incorrect!')
         result.add('The answer was: ' + qlist[qnum-1][2])
+    
     if health.value() <= 0:
         health.value(0)
         result.add('\nYou have no more health!')
         result.add('\nHeal or press Start to restart.')
         if teacher:
             conn.send('Student ran out of health!')
-    if health.value() > 100:
-        health.value(100)
+    if health.value() > config.HPMAX:
+        health.value(config.HPMAX)
     if xp.value() < 0:
         xp.value(0)
 
@@ -127,11 +136,13 @@ def submit_answer(widget):
 def heal_cb(widget):
     global healleft
 
-    if health.value() == 100 or prog.value() == 100:
+    if health.value() == config.HPMAX or prog.value() == 100:
+        return
+    if 'healleft' not in globals():
         return
 
     if healleft > 0:
-        health.value(health.value() + 10)
+        health.value(health.value() + config.HEALAMOUNT)
         healleft = healleft - 1
         health.label('HP: ' + str(int(health.value())))
         heal.label('Heal:\t' + str(healleft))
@@ -142,16 +153,16 @@ def heal_cb(widget):
 def hint_cb(widget):
     global hintleft
 
-    if prog.value() == 100:
+    if prog.value() == 100 or 'qlist' not in globals():
         return
-    if 'Hint:\n' + qlist[qnum-1][1] == result.text(1):
+    if qlist[qnum-1][1] == result.text(2):  # If hint has just been used
         return
 
     if hintleft > 0:
         result.textcolor(fl_rgb_color(200, 150, 0))
         result.clear()
         result.add('Hint:')
-        result.add(qlist[qnum-1][1])
+        result.add(qlist[qnum-1][1])  # Display hint in result box
         hintleft = hintleft - 1
         hint.label('Hint:\t' + str(hintleft))
         hint.redraw()
@@ -161,13 +172,13 @@ def hint_cb(widget):
 def cheat_cb(widget):
     global cheatleft
 
-    if prog.value() == 100:
+    if prog.value() == 100 or 'qlist' not in globals():
         return
-    if qlist[qnum-1][2] == ans.value():
+    if qlist[qnum-1][2] == ans.value():  # If cheat has just been used
         return
 
     if cheatleft > 0:
-        ans.value(qlist[qnum-1][2])
+        ans.value(qlist[qnum-1][2])  # Put answer in answer box
         cheatleft = cheatleft - 1
         cheat.label('Cheat:\t' + str(cheatleft))
         cheat.redraw()
@@ -196,7 +207,6 @@ teachip.labelcolor(FL_WHITE)
 health = Fl_Progress(390, 220, 200, 25)
 health.color(fl_rgb_color(255, 210, 210), fl_rgb_color(210, 0, 0))
 xp = Fl_Progress(390, 255, 200, 25)
-xp.maximum(1000)
 xp.color(fl_rgb_color(210, 255, 210), fl_rgb_color(0, 170, 60))
 prog = Fl_Progress(390, 290, 200, 25)
 prog.color(fl_rgb_color(255, 255, 125), fl_rgb_color(235, 195, 25))

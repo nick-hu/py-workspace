@@ -45,8 +45,8 @@ while True:
             print players[x] + "'s score:", scores[x]
 
         if scores.count(max(scores)) == 1:
-            print ('\n' + players[scores.index(max(scores))],
-                   'wins with a score of:', max(scores))
+            print " ".join(['\n' + players[scores.index(max(scores))],
+                           'wins with a score of:', max(scores)])
 
         else:
             tie, tval = [], max(scores)

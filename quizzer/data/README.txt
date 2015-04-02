@@ -23,3 +23,32 @@ tags to style your question (e.g. you can use <br> for newlines).
 However, note that pyFLTK only uses HTML2.
 
 See the sample.txt file for an example of a test file.
+
+Quizzer 1.0 - Option customization for teachers
+===============================================
+
+To customize quiz options, such as amount of heals, hints, cheats, and more,
+simply run "quizconfig.py"
+
+Some recommended themes:
+------------------------
+
+Format: Heal/Heal Amount/Hints/Cheats/Max. HP/Regeneration/Max. XP
+
+--EASY--
+Invincible: 0/0/3/1/100/0/1000 (Set no health cost for questions)
+Healthy: 3/20/2/1/200/0.75/1000
+Health Boost: 1/50/3/1/100/0.5/1000
+
+--MEDIUM--
+Classic: 1/10/3/1/100/0.25/1000
+Deluxe: 2/20/6/2/200/0.25/2000
+
+--HARD--
+Hardcore: 0/0/0/0/100/0/1000
+Wither: 0/0/0/0/100/-0.25/1000
+Sudden Death: 0/0/0/0/1/0/1000
+
+--OTHER--
+No-XP: 1/10/3/1/100/0.25/0
+Plain: 0/0/0/0/100/0/0 (Set no health cost for questions)

@@ -5,7 +5,8 @@ import sys
 
 new = ['@', '#', 'A', '%', 'S', '<', '*', '+', ':', '.', ' ', ' ']
 new2 = ['@', '*', '!', '-', ' ', ' ', ' ', ' ']
-greyscale = new2
+new3 = ['#', '#', '#', '#', '#', '#', ' ', ' ', ' ', ' ', ' ', ' ']
+greyscale = new
 div = 256 // (len(greyscale) - 1)
 
 img = Image.open(sys.argv[1]).convert('L')
